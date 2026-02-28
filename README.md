@@ -39,7 +39,7 @@ npm run dev:preview
 # Test on your phone (same Wi-Fi network)
 # Starts the dev server and exposes it on the local network.
 # Open the Network URL shown in the terminal on your phone's browser.
-cd /home/pierre/Documents/experiments/calendrier/app_calendrier && npx vite --host
+npx vite --host
 
 # Run the test suite
 npm test
