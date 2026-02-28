@@ -1,0 +1,41 @@
+/**
+ * @file index.css
+ * @description Global reset and base styles.
+ *
+ * Imports the theme tokens and component styles in the correct order.
+ */
+
+@import './styles/theme.css';
+@import './styles/components.css';
+@import './styles/responsive.css';
+
+/* ---- CSS Reset ---- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+}
+
+button {
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}

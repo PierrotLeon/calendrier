@@ -1,0 +1,170 @@
+/**
+ * @module constants
+ * @description Application-wide constants for the calendar app.
+ *
+ * Centralises all magic strings and configuration values so they can be
+ * changed in a single place. Import what you need from here rather than
+ * hard-coding values in components or utilities.
+ */
+
+/* ------------------------------------------------------------------ */
+/*  Days & months                                                     */
+/* ------------------------------------------------------------------ */
+
+/** Ordered weekday labels starting on Monday (ISO convention). */
+export const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+/** Full weekday names, indexed the same way as `WEEKDAYS`. */
+export const WEEKDAYS_FULL = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
+
+/** Full month names (0-indexed like `Date.getMonth()`). */
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+/* ------------------------------------------------------------------ */
+/*  Calendar views                                                    */
+/* ------------------------------------------------------------------ */
+
+/** Supported calendar view modes. */
+export const VIEW_MODES = {
+  MONTH: 'month',
+  WEEK: 'week',
+};
+
+/* ------------------------------------------------------------------ */
+/*  Event colour palette                                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Pre-defined colour options for calendar events.
+ * Each entry has a human-readable `label` and a CSS-compatible `value`.
+ */
+export const EVENT_COLORS = [
+  { label: 'Indigo', value: '#4F46E5' },
+  { label: 'Rose', value: '#E11D48' },
+  { label: 'Emerald', value: '#059669' },
+  { label: 'Amber', value: '#D97706' },
+  { label: 'Sky', value: '#0284C7' },
+  { label: 'Violet', value: '#7C3AED' },
+  { label: 'Slate', value: '#475569' },
+];
+
+/** Default colour applied to newly created events. */
+export const DEFAULT_EVENT_COLOR = EVENT_COLORS[0].value;
+
+/* ------------------------------------------------------------------ */
+/*  Local-storage keys                                                */
+/* ------------------------------------------------------------------ */
+
+/** Key under which persisted events are stored in `localStorage`. */
+export const STORAGE_KEY = 'calendrier_events';
+
+/** Key under which event-type rules (settings) are stored. */
+export const SETTINGS_KEY = 'calendrier_settings';
+
+/* ------------------------------------------------------------------ */
+/*  Responsive breakpoints                                            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Device-specific breakpoints in CSS pixels.
+ *
+ * - MOBILE_SM  : Small phones (Samsung Galaxy S series — 360px logical width)
+ * - MOBILE_MD  : Medium phones (Fairphone 4 — 394px logical width)
+ * - TABLET     : Tablets and small laptops
+ * - DESKTOP    : Standard laptop / desktop screens
+ *
+ * These values are used in CSS media queries (see `responsive.css`)
+ * and in the `useMediaQuery` hook for JS-side layout decisions.
+ */
+export const BREAKPOINTS = {
+  MOBILE_SM: 360,   // Samsung Galaxy S21/S22/S23 etc.
+  MOBILE_MD: 414,   // Fairphone 4 (394px), iPhone Plus-size, etc.
+  TABLET: 768,
+  DESKTOP: 1024,
+};
+
+/* ------------------------------------------------------------------ */
+/*  Default event-type rules (auto-match)                             */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Built-in event-type rules for auto-matching colour and time.
+ * Each rule has:
+ * - `id`          : unique identifier
+ * - `name`        : human-readable label
+ * - `pattern`     : regex string matched against event title + description
+ * - `color`       : hex colour to suggest
+ * - `startTime`   : optional default start time ("HH:mm")
+ * - `endTime`     : optional default end time ("HH:mm")
+ * - `enabled`     : whether the rule is active
+ *
+ * Users can override / extend these in the Settings panel.
+ */
+export const DEFAULT_EVENT_RULES = [
+  {
+    id: 'rule-meeting',
+    name: 'Meeting',
+    pattern: '\\b(meeting|réunion|standup|sync|call|conf)\\b',
+    color: '#4F46E5',
+    startTime: '09:00',
+    endTime: '10:00',
+    enabled: true,
+  },
+  {
+    id: 'rule-sport',
+    name: 'Sport / Exercise',
+    pattern: '\\b(sport|gym|run|yoga|swim|athl|course|bike|workout|pilates|exercise|training)\\b',
+    color: '#059669',
+    startTime: '18:00',
+    endTime: '19:00',
+    enabled: true,
+  },
+  {
+    id: 'rule-lunch',
+    name: 'Lunch / Meal',
+    pattern: '\\b(lunch|déjeuner|resto|restaurant|dinner|dîner|repas|meal|brunch)\\b',
+    color: '#D97706',
+    startTime: '12:00',
+    endTime: '13:00',
+    enabled: true,
+  },
+  {
+    id: 'rule-doctor',
+    name: 'Medical',
+    pattern: '\\b(docteur|médecin|dentist|psy|hopital|hôpital|appointment|gyneco|médical)\\b',
+    color: '#E11D48',
+    startTime: '10:00',
+    endTime: '11:00',
+    enabled: true,
+  },
+  {
+    id: 'rule-birthday',
+    name: 'Birthday / Party',
+    pattern: '\\b(birthday|anniversaire|party|fête|celebration)\\b',
+    color: '#7C3AED',
+    startTime: '',
+    endTime: '',
+    enabled: true,
+  },
+];

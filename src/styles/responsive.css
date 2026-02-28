@@ -1,0 +1,218 @@
+/**
+ * @file responsive.css
+ * @description Responsive breakpoints for multi-device layouts.
+ *
+ * Target devices:
+ *   - Samsung Galaxy   → ~360 px  (MOBILE_SM)
+ *   - Fairphone 4      → ~394 px  (MOBILE_MD, treated at 414 px cut)
+ *   - Tablet / small laptop  → 768 px
+ *   - Laptop / desktop → 1024 px+
+ *
+ * Mobile-first: base styles are for the smallest screen, then we
+ * progressively enhance with min-width media queries.
+ */
+
+/* ================================================================== */
+/*  BASE  —  ≤ 413 px  (Samsung Galaxy, Fairphone 4)                   */
+/* ================================================================== */
+
+/* Sidebar: hidden by default, shown as an overlay when toggled */
+.sidebar {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  bottom: 0;
+  width: 80vw;
+  max-width: 20rem;
+  z-index: 900;
+  transform: translateX(-100%);
+  transition: transform var(--transition-base);
+}
+
+.sidebar--open {
+  transform: translateX(0);
+}
+
+.sidebar--closed {
+  transform: translateX(-100%);
+}
+
+/* Semi-transparent backdrop behind the mobile sidebar */
+.sidebar-backdrop {
+  display: none;
+}
+
+.sidebar--open ~ .sidebar-backdrop,
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  top: var(--header-height);
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 899;
+}
+
+/* Show backdrop only when sidebar is open (rendered conditionally in JSX) */
+.sidebar--open + .sidebar-backdrop {
+  display: block;
+}
+
+/* The backdrop div is rendered *before* the sidebar in the DOM
+   but we use the conditional render in JSX, so just make sure it
+   displays when present. */
+.sidebar-backdrop {
+  display: block;
+}
+
+/* Header adjustments for small screens */
+.header {
+  padding: 0 var(--space-3);
+  gap: var(--space-1);
+}
+
+.header__title-text {
+  display: none; /* hide "Calendrier" brand label on small screens */
+}
+
+.header__month-year {
+  font-size: var(--font-size-base);
+  min-width: 8rem;
+}
+
+/* Calendar grid: reduce cell height */
+.day-cell {
+  min-height: 3.5rem;
+}
+
+.day-cell__number {
+  width: 1.4rem;
+  height: 1.4rem;
+  font-size: var(--font-size-xs);
+}
+
+.event-chip {
+  font-size: 0.625rem;
+}
+
+/* Modal: full-width on mobile */
+.modal {
+  max-width: 100%;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  max-height: 95vh;
+}
+
+.modal-overlay {
+  align-items: flex-end;
+}
+
+/* Settings panel: full width on mobile */
+.settings-panel {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ================================================================== */
+/*  ≥ 414 px  —  Fairphone 4 / larger phones                          */
+/* ================================================================== */
+
+@media (min-width: 414px) {
+  .header__month-year {
+    font-size: var(--font-size-lg);
+    min-width: 10rem;
+  }
+
+  .day-cell {
+    min-height: 4rem;
+  }
+
+  .day-cell__number {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .event-chip {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ================================================================== */
+/*  ≥ 768 px  —  Tablet                                                */
+/* ================================================================== */
+
+@media (min-width: 768px) {
+  /* Still use overlay sidebar on tablets in portrait */
+  .sidebar {
+    width: 18rem;
+  }
+
+  .header {
+    padding: 0 var(--space-4);
+  }
+
+  .header__title-text {
+    display: inline; /* show brand again */
+  }
+
+  .day-cell {
+    min-height: 5rem;
+  }
+
+  .modal-overlay {
+    align-items: center;
+  }
+
+  .modal {
+    max-width: 28rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .settings-panel {
+    width: 28rem;
+    max-width: 28rem;
+  }
+}
+
+/* ================================================================== */
+/*  ≥ 1024 px  —  Laptop / Desktop                                    */
+/* ================================================================== */
+
+@media (min-width: 1024px) {
+  /* Sidebar: inline, always visible — override mobile overlay styles */
+  .sidebar {
+    position: static;
+    transform: none;
+    width: var(--sidebar-width);
+    z-index: auto;
+  }
+
+  .sidebar--open,
+  .sidebar--closed {
+    transform: none;
+  }
+
+  /* Hide backdrop on desktop (never needed) */
+  .sidebar-backdrop {
+    display: none !important;
+  }
+
+  /* Hide the sidebar hamburger toggle on desktop */
+  .header__sidebar-toggle {
+    display: none;
+  }
+
+  .header {
+    padding: 0 var(--space-6);
+  }
+
+  .header__title-text {
+    display: inline;
+  }
+
+  .day-cell {
+    min-height: 5.5rem;
+  }
+
+  .settings-panel {
+    width: 32rem;
+    max-width: 32rem;
+  }
+}
