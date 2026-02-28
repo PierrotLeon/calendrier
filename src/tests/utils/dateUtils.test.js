@@ -96,8 +96,8 @@ describe('dateUtils', () => {
   /* ---- Formatting ---- */
 
   describe('formatting helpers', () => {
-    it('formatMonthYear returns "February 2026"', () => {
-      expect(formatMonthYear(REF_DATE)).toBe('February 2026');
+    it('formatMonthYear returns "Février 2026"', () => {
+      expect(formatMonthYear(REF_DATE)).toBe('Février 2026');
     });
 
     it('formatDayNumber returns "28"', () => {
@@ -113,8 +113,8 @@ describe('dateUtils', () => {
       expect(formatTime(d)).toBe('14:30');
     });
 
-    it('formatFullDate returns a long human-readable string', () => {
-      expect(formatFullDate(REF_DATE)).toContain('February');
+    it('formatFullDate returns a long human-readable string in French', () => {
+      expect(formatFullDate(REF_DATE)).toContain('février');
       expect(formatFullDate(REF_DATE)).toContain('2026');
     });
   });

@@ -24,6 +24,7 @@ import {
   parseISO,
   startOfDay,
 } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 /* ------------------------------------------------------------------ */
 /*  Week-start option (Monday = 1)                                    */
@@ -97,10 +98,11 @@ export function prevWeek(date) {
 
 /**
  * Format a date for display in the calendar header.
- * Example output: "February 2026".
+ * Example output: "Février 2026".
  */
 export function formatMonthYear(date) {
-  return format(date, 'MMMM yyyy');
+  const raw = format(date, 'MMMM yyyy', { locale: fr });
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
 /**
@@ -126,10 +128,20 @@ export function formatTime(date) {
 }
 
 /**
- * Human-friendly full date. Example: "Saturday, February 28, 2026".
+ * Human-friendly full date. Example: "Samedi 28 février 2026".
  */
 export function formatFullDate(date) {
-  return format(date, 'EEEE, MMMM d, yyyy');
+  const raw = format(date, 'EEEE d MMMM yyyy', { locale: fr });
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
+}
+
+/**
+ * Short weekday + day number. Example: "Lun 23".
+ */
+export function formatShortDayWithNumber(date) {
+  const day = format(date, 'EEE', { locale: fr });
+  const num = format(date, 'd');
+  return `${day.charAt(0).toUpperCase() + day.slice(1)} ${num}`;
 }
 
 /* ------------------------------------------------------------------ */

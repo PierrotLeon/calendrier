@@ -12,33 +12,33 @@
 /* ------------------------------------------------------------------ */
 
 /** Ordered weekday labels starting on Monday (ISO convention). */
-export const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+export const WEEKDAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
 /** Full weekday names, indexed the same way as `WEEKDAYS`. */
 export const WEEKDAYS_FULL = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
+  'Lundi',
+  'Mardi',
+  'Mercredi',
+  'Jeudi',
+  'Vendredi',
+  'Samedi',
+  'Dimanche',
 ];
 
 /** Full month names (0-indexed like `Date.getMonth()`). */
 export const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  'Janvier',
+  'Février',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Août',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Décembre',
 ];
 
 /* ------------------------------------------------------------------ */
@@ -109,22 +109,22 @@ export const BREAKPOINTS = {
 /* ------------------------------------------------------------------ */
 
 /**
- * Built-in event-type rules for auto-matching colour and time.
- * Each rule has:
+ * Built-in event templates for auto-matching colour and time.
+ * Each template has:
  * - `id`          : unique identifier
  * - `name`        : human-readable label
  * - `pattern`     : regex string matched against event title + description
  * - `color`       : hex colour to suggest
  * - `startTime`   : optional default start time ("HH:mm")
  * - `endTime`     : optional default end time ("HH:mm")
- * - `enabled`     : whether the rule is active
+ * - `enabled`     : whether the template is active
  *
- * Users can override / extend these in the Settings panel.
+ * Users can override / extend these in the templates panel.
  */
 export const DEFAULT_EVENT_RULES = [
   {
     id: 'rule-meeting',
-    name: 'Meeting',
+    name: 'Réunion',
     pattern: '\\b(meeting|réunion|standup|sync|call|conf)\\b',
     color: '#4F46E5',
     startTime: '09:00',
@@ -133,8 +133,8 @@ export const DEFAULT_EVENT_RULES = [
   },
   {
     id: 'rule-sport',
-    name: 'Sport / Exercise',
-    pattern: '\\b(sport|gym|run|yoga|swim|athl|course|bike|workout|pilates|exercise|training)\\b',
+    name: 'Sport / Exercice',
+    pattern: '\\b(sport|gym|run|yoga|swim|athl|course|bike|workout|pilates|exercise|training|entraînement)\\b',
     color: '#059669',
     startTime: '18:00',
     endTime: '19:00',
@@ -142,7 +142,7 @@ export const DEFAULT_EVENT_RULES = [
   },
   {
     id: 'rule-lunch',
-    name: 'Lunch / Meal',
+    name: 'Repas',
     pattern: '\\b(lunch|déjeuner|resto|restaurant|dinner|dîner|repas|meal|brunch)\\b',
     color: '#D97706',
     startTime: '12:00',
@@ -151,8 +151,8 @@ export const DEFAULT_EVENT_RULES = [
   },
   {
     id: 'rule-doctor',
-    name: 'Medical',
-    pattern: '\\b(docteur|médecin|dentist|psy|hopital|hôpital|appointment|gyneco|médical)\\b',
+    name: 'Médical',
+    pattern: '\\b(docteur|médecin|dentist|psy|hopital|hôpital|appointment|gyneco|médical|rdv)\\b',
     color: '#E11D48',
     startTime: '10:00',
     endTime: '11:00',
@@ -160,8 +160,8 @@ export const DEFAULT_EVENT_RULES = [
   },
   {
     id: 'rule-birthday',
-    name: 'Birthday / Party',
-    pattern: '\\b(birthday|anniversaire|party|fête|celebration)\\b',
+    name: 'Anniversaire / Fête',
+    pattern: '\\b(birthday|anniversaire|party|fête|celebration|célébration)\\b',
     color: '#7C3AED',
     startTime: '',
     endTime: '',

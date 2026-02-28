@@ -31,7 +31,7 @@ describe('SettingsPanel', () => {
 
   it('renders the panel title when open', () => {
     render(<SettingsPanel {...defaultProps} />);
-    expect(screen.getByText('Event Type Rules')).toBeInTheDocument();
+    expect(screen.getByText("Modèles d'événements")).toBeInTheDocument();
   });
 
   it('displays all provided rules', () => {
@@ -48,52 +48,47 @@ describe('SettingsPanel', () => {
   it('calls onClose when close button is clicked', async () => {
     const onClose = vi.fn();
     render(<SettingsPanel {...defaultProps} onClose={onClose} />);
-    await userEvent.click(screen.getByLabelText('Close settings'));
+    await userEvent.click(screen.getByLabelText('Fermer les modèles'));
     expect(onClose).toHaveBeenCalledOnce();
   });
 
   it('calls onClose when clicking the overlay', async () => {
     const onClose = vi.fn();
     render(<SettingsPanel {...defaultProps} onClose={onClose} />);
-    // The modal-overlay div itself has the onClick handler.
-    // We need to click the overlay, not the inner panel.
-    // Use fireEvent since userEvent may bubble into children.
     const { fireEvent } = await import('@testing-library/react');
     const overlay = document.querySelector('.modal-overlay');
     fireEvent.click(overlay);
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it('calls onDeleteRule when Delete button is clicked', async () => {
+  it('calls onDeleteRule when Supprimer button is clicked', async () => {
     const onDeleteRule = vi.fn();
     render(<SettingsPanel {...defaultProps} onDeleteRule={onDeleteRule} />);
-    const deleteButtons = screen.getAllByText('Delete');
+    const deleteButtons = screen.getAllByText('Supprimer');
     await userEvent.click(deleteButtons[0]);
     expect(onDeleteRule).toHaveBeenCalledWith('1');
   });
 
-  it('enters edit mode when Edit button is clicked', async () => {
+  it('enters edit mode when Modifier button is clicked', async () => {
     render(<SettingsPanel {...defaultProps} />);
-    const editButtons = screen.getAllByText('Edit');
+    const editButtons = screen.getAllByText('Modifier');
     await userEvent.click(editButtons[0]);
-    // Should now show Save button and a Cancel button within the edit form
-    expect(screen.getByText('Save')).toBeInTheDocument();
-    // Multiple "Cancel" elements exist — check that at least one is in the edit form
-    const cancelButtons = screen.getAllByText('Cancel');
+    expect(screen.getByText('Enregistrer')).toBeInTheDocument();
+    const cancelButtons = screen.getAllByText('Annuler');
     expect(cancelButtons.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('calls onResetDefaults when "Reset to Defaults" is clicked', async () => {
+  it('calls onResetDefaults when "Réinitialiser" is clicked', async () => {
     const onResetDefaults = vi.fn();
     render(<SettingsPanel {...defaultProps} onResetDefaults={onResetDefaults} />);
-    await userEvent.click(screen.getByText('Reset to Defaults'));
+    await userEvent.click(screen.getByText('Réinitialiser'));
     expect(onResetDefaults).toHaveBeenCalledOnce();
   });
 
-  it('calls onAddRule when "+ Add Rule" is clicked', async () => {
+  it('calls onAddRule when "+ Ajouter un modèle" is clicked', async () => {
     const onAddRule = vi.fn();
     render(<SettingsPanel {...defaultProps} onAddRule={onAddRule} />);
-    await userEvent.click(screen.getByText('+ Add Rule'));
+    await userEvent.click(screen.getByText('+ Ajouter un modèle'));
     expect(onAddRule).toHaveBeenCalledOnce();
   });
 

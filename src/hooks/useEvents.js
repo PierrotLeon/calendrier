@@ -9,7 +9,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { loadEvents, saveEvents } from '../services/storageService';
-import { createEvent } from '../utils/eventModel';
+import { createEvent, eventCoversDate } from '../utils/eventModel';
 
 /**
  * @returns {Object} event state and CRUD helpers.
@@ -57,12 +57,13 @@ export function useEvents() {
   }, []);
 
   /**
-   * Return events whose `date` field matches the given ISO string.
+   * Return events that cover the given ISO date string.
+   * Works for both single-day and multi-day events.
    * @param {string} dateISO – "yyyy-MM-dd".
    * @returns {Object[]}
    */
   const getEventsForDate = useCallback(
-    (dateISO) => events.filter((ev) => ev.date === dateISO),
+    (dateISO) => events.filter((ev) => eventCoversDate(ev, dateISO)),
     [events],
   );
 

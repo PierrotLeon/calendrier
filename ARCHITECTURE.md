@@ -110,6 +110,8 @@ Component styles in `src/styles/components.css` reference only these variables. 
 {
   "id": "uuid-v4",
   "title": "Team standup",
+  "startDate": "2026-02-28",
+  "endDate": "2026-03-02",
   "date": "2026-02-28",
   "startTime": "09:00",
   "endTime": "09:15",
@@ -119,8 +121,13 @@ Component styles in `src/styles/components.css` reference only these variables. 
 }
 ```
 
+- **`startDate` / `endDate`** — the event's date range. For single-day events they are equal. The calendar grid, sidebar, and filtering all use `eventCoversDate(event, dateISO)` to determine which days an event appears on.
+- **`date`** — legacy alias that always mirrors `startDate` for backward compatibility.
+- **`isMultiDay(event)`** — helper that returns `true` when `endDate > startDate`.
+- **`eventCoversDate(event, dateISO)`** — returns `true` if the date falls within the event's range.
+
 Factory: `createEvent(overrides)` in `utils/eventModel.js`.
-Validation: `validateEvent(event)` returns an array of error strings (empty = valid).
+Validation: `validateEvent(event)` returns an array of error strings (empty = valid). Time ordering is only enforced for single-day events.
 
 ---
 
@@ -144,21 +151,51 @@ Because all storage access is isolated here, swapping to IndexedDB, a REST API, 
 ## 8. Testing Strategy
 
 ```
-132 tests across 13 files (all passing)
+161 tests across 14 files (all passing)
 ```
 
 | Layer       | What is tested                                                  |
 | ----------- | --------------------------------------------------------------- |
-| `utils/`    | Date grid generation, navigation, formatting, parsing, validation, regex rule matching. |
+| `utils/`    | Date grid generation, navigation, formatting, parsing, validation, regex rule matching, multi-day helpers (eventCoversDate, isMultiDay), ICS exporter (single/multi-day, all-day, timed, text escaping). |
 | `services/` | Load, save, clear for events & settings, corrupted-data recovery. |
 | `hooks/`    | State transitions: calendar navigation, event CRUD, modal open/close, settings rule CRUD. |
-| Components  | Rendering output, user interactions (clicks, keyboard), autofill suggestion banners, settings panel CRUD, integration flow (create event end-to-end). |
+| Components  | Rendering output, user interactions (clicks, keyboard), autofill suggestion banners, settings panel CRUD, multi-day date pre-fill, integration flow (create event end-to-end). |
 
 Tests use `jsdom` environment with a `localStorage` polyfill defined in `tests/setup.js`.
 
 ---
 
-## 9. Extending the App
+## 9. ICS Export
+
+`utils/icsExporter.js` generates RFC 5545 compliant `.ics` files:
+
+- **Timed events** → `DTSTART` / `DTEND` with local datetime `YYYYMMDDTHHMMSS`.
+- **All-day events** → `DTSTART;VALUE=DATE` / `DTEND;VALUE=DATE` (exclusive end).
+- **Multi-day support** — works for both timed and all-day multi-day events.
+- **Text escaping** — semicolons, commas, backslashes, and newlines are properly escaped.
+- **Line folding** — lines longer than 75 octets are folded per RFC 5545 §3.1.
+
+UI integration:
+- Each event card in `EventList` has a ⬇ export button (visible on hover).
+- The sidebar has an "Export all events (.ics)" button.
+
+---
+
+## 10. Device Preview
+
+A separate `preview.html` page (served at `/preview.html`) renders the app inside iframes at common device sizes:
+
+| Device              | Portrait    | Landscape   |
+| ------------------- | ----------- | ----------- |
+| Samsung Galaxy S    | 360 × 640   | 640 × 360   |
+| Fairphone 4         | 414 × 896   | 896 × 414   |
+| Tablet              | 768 × 1024  | 1024 × 768  |
+
+Vite is configured as a multi-page app so both `index.html` and `preview.html` are built.
+
+---
+
+## 11. Extending the App
 
 | Feature                 | Where to change                                         |
 | ----------------------- | ------------------------------------------------------- |
@@ -170,3 +207,5 @@ Tests use `jsdom` environment with a `localStorage` polyfill defined in `tests/s
 | Localisation            | Add an i18n layer and swap `constants/` month/day names.|
 | New auto-match rule     | Add to `constants/` `DEFAULT_EVENT_RULES` or use the Settings panel at runtime. |
 | Adjust breakpoints      | Edit `constants/` `BREAKPOINTS` + `styles/responsive.css`. |
+| ICS import              | Parse `.ics` files and call `addEvent()` for each VEVENT. |
+| CalDAV sync             | Replace `storageService.js` with CalDAV client calls.   |

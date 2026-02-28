@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendrier — Device Preview (Dev Tool)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    /* ---- Top bar ---- */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: #16213e;
+      border-bottom: 1px solid #0f3460;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .toolbar__title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #e94560;
+      white-space: nowrap;
+    }
+    .toolbar__badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      background: #e94560;
+      color: white;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .toolbar__spacer { flex: 1; }
+    .toolbar__hint {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    /* ---- Filter tabs ---- */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #16213e;
+      border-bottom: 1px solid #0f3460;
+    }
+    .tab {
+      padding: 0.4rem 0.9rem;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background: transparent;
+      color: #aaa;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .tab:hover {
+      border-color: #e94560;
+      color: #e94560;
+    }
+    .tab--active {
+      background: #e94560;
+      color: white;
+      border-color: #e94560;
+    }
+
+    /* ---- Content area ---- */
+    .content {
+      padding: 1.5rem;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+    .section__header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .section__icon {
+      font-size: 1.2rem;
+    }
+    .section__title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f0f0f0;
+    }
+
+    .previews {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    /* ---- Device frame ---- */
+    .device-frame {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #16213e;
+      border-radius: 16px;
+      padding: 1rem;
+      border: 1px solid #0f3460;
+      transition: box-shadow 200ms ease;
+    }
+    .device-frame:hover {
+      box-shadow: 0 4px 20px rgba(233, 69, 96, 0.15);
+    }
+    .device-frame__label {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #f0f0f0;
+      margin-bottom: 0.15rem;
+    }
+    .device-frame__size {
+      font-size: 0.7rem;
+      color: #666;
+      margin-bottom: 0.75rem;
+      font-family: 'Courier New', monospace;
+    }
+    .device-frame__bezel {
+      background: #111;
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: inset 0 0 0 1px #333;
+    }
+    .device-frame iframe {
+      display: block;
+      border: none;
+      border-radius: 8px;
+      background: white;
+    }
+
+    /* ---- Visibility control ---- */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- Top toolbar -->
+  <div class="toolbar">
+    <span class="toolbar__title">📱 Calendrier — Device Preview</span>
+    <span class="toolbar__badge">Dev Only</span>
+    <span class="toolbar__spacer"></span>
+    <span class="toolbar__hint">This page is not part of the production app</span>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="tabs">
+    <button class="tab tab--active" data-filter="all">All</button>
+    <button class="tab" data-filter="phone">📱 Phones</button>
+    <button class="tab" data-filter="tablet">📋 Tablets</button>
+    <button class="tab" data-filter="desktop">🖥️ Desktop</button>
+  </div>
+
+  <div class="content">
+    <!-- ════ Phone section ════ -->
+    <div class="section" data-category="phone">
+      <div class="section__header">
+        <span class="section__icon">📱</span>
+        <span class="section__title">Phones</span>
+      </div>
+      <div class="previews">
+        <!-- Galaxy S – Portrait -->
+        <div class="device-frame">
+          <span class="device-frame__label">Galaxy S (Portrait)</span>
+          <span class="device-frame__size">360 × 640</span>
+          <div class="device-frame__bezel">
+            <iframe src="/" width="360" height="640" title="Galaxy S Portrait"></iframe>
+          </div>
+        </div>
+        <!-- Galaxy S – Landscape -->
+        <div class="device-frame">
+          <span class="device-frame__label">Galaxy S (Landscape)</span>
+          <span class="device-frame__size">640 × 360</span>
+          <div class="device-frame__bezel">
+            <iframe src="/" width="640" height="360" title="Galaxy S Landscape"></iframe>
+          </div>
+        </div>
+        <!-- Fairphone 4 – Portrait -->
+        <div class="device-frame">
+          <span class="device-frame__label">Fairphone 4 (Portrait)</span>
+          <span class="device-frame__size">414 × 896</span>
+          <div class="device-frame__bezel">
+            <iframe src="/" width="414" height="896" title="Fairphone 4 Portrait"></iframe>
+          </div>
+        </div>
+        <!-- Fairphone 4 – Landscape -->
+        <div class="device-frame">
+          <span class="device-frame__label">Fairphone 4 (Landscape)</span>
+          <span class="device-frame__size">896 × 414</span>
+          <div class="device-frame__bezel">
+            <iframe src="/" width="896" height="414" title="Fairphone 4 Landscape"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ Tablet section ════ -->
+    <div class="section" data-category="tablet">
+      <div class="section__header">
+        <span class="section__icon">📋</span>
+        <span class="section__title">Tablets</span>
+      </div>
+      <div class="previews">
+        <!-- Tablet – Portrait -->
+        <div class="device-frame">
+          <span class="device-frame__label">Tablet (Portrait)</span>
+          <span class="device-frame__size">768 × 1024</span>
+          <div class="device-frame__bezel">
+            <iframe src="/" width="768" height="1024" title="Tablet Portrait"></iframe>
+          </div>
+        </div>
+        <!-- Tablet – Landscape -->
+        <div class="device-frame">
+          <span class="device-frame__label">Tablet (Landscape)</span>
+          <span class="device-frame__size">1024 × 768</span>
+          <div class="device-frame__bezel">
+            <iframe src="/" width="1024" height="768" title="Tablet Landscape"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ Desktop section ════ -->
+    <div class="section" data-category="desktop">
+      <div class="section__header">
+        <span class="section__icon">🖥️</span>
+        <span class="section__title">Desktop</span>
+      </div>
+      <div class="previews">
+        <div class="device-frame">
+          <span class="device-frame__label">Desktop (1280 × 800)</span>
+          <span class="device-frame__size">1280 × 800</span>
+          <div class="device-frame__bezel">
+            <iframe src="/" width="1280" height="800" title="Desktop"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab filter logic
+    const tabs = document.querySelectorAll('.tab');
+    const sections = document.querySelectorAll('.section');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('tab--active'));
+        tab.classList.add('tab--active');
+
+        const filter = tab.dataset.filter;
+        sections.forEach((section) => {
+          if (filter === 'all' || section.dataset.category === filter) {
+            section.classList.remove('hidden');
+          } else {
+            section.classList.add('hidden');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

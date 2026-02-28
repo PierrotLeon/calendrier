@@ -20,29 +20,29 @@ describe('App', () => {
 
   it('renders weekday headers', () => {
     render(<App />);
-    expect(screen.getByText('Mon')).toBeInTheDocument();
-    expect(screen.getByText('Sun')).toBeInTheDocument();
+    expect(screen.getByText('Lun')).toBeInTheDocument();
+    expect(screen.getByText('Dim')).toBeInTheDocument();
   });
 
-  it('renders the sidebar with "+ New Event" button', () => {
+  it('renders the sidebar with "+ Nouvel événement" button', () => {
     render(<App />);
-    expect(screen.getByText('+ New Event')).toBeInTheDocument();
+    expect(screen.getByText('+ Nouvel événement')).toBeInTheDocument();
   });
 
-  it('opens the event modal when "+ New Event" is clicked', async () => {
+  it('opens the event modal when "+ Nouvel événement" is clicked', async () => {
     render(<App />);
-    await userEvent.click(screen.getByText('+ New Event'));
-    expect(screen.getByText('New Event')).toBeInTheDocument();
-    expect(screen.getByLabelText('Title')).toBeInTheDocument();
+    await userEvent.click(screen.getByText('+ Nouvel événement'));
+    expect(screen.getByText('Nouvel événement')).toBeInTheDocument();
+    expect(screen.getByLabelText('Titre')).toBeInTheDocument();
   });
 
   it('creates an event and shows it in the sidebar', async () => {
     render(<App />);
-    await userEvent.click(screen.getByText('+ New Event'));
+    await userEvent.click(screen.getByText('+ Nouvel événement'));
 
-    const titleInput = screen.getByLabelText('Title');
+    const titleInput = screen.getByLabelText('Titre');
     await userEvent.type(titleInput, 'Integration Test Event');
-    await userEvent.click(screen.getByText('Create'));
+    await userEvent.click(screen.getByText('Créer'));
 
     // The event should now appear in the sidebar event list and the grid
     const matches = screen.getAllByText('Integration Test Event');
@@ -55,34 +55,40 @@ describe('App', () => {
       screen.getByText(/\w+ \d{4}/, { selector: '.header__month-year' });
 
     const initialText = headerText().textContent;
-    await userEvent.click(screen.getByLabelText('Next'));
+    await userEvent.click(screen.getByLabelText('Suivant'));
     expect(headerText().textContent).not.toBe(initialText);
   });
 
-  it('toggles between month and week view', async () => {
+  it('toggles between month and week view via menu', async () => {
     render(<App />);
     // Default is month view — should have many day cells
     const daysBefore = document.querySelectorAll('.day-cell').length;
     expect(daysBefore).toBeGreaterThanOrEqual(28);
 
-    await userEvent.click(screen.getByText('Week'));
-    const daysAfter = document.querySelectorAll('.day-cell').length;
-    expect(daysAfter).toBe(7);
+    // Open the menu and click Semaine
+    await userEvent.click(screen.getByLabelText('Menu'));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Semaine' }));
+
+    // In week view there should be a week-grid instead of day-cells
+    expect(document.querySelector('.week-grid')).toBeInTheDocument();
   });
 
-  it('opens the settings panel when the settings button is clicked', async () => {
+  it('opens the settings panel via the menu', async () => {
     render(<App />);
-    await userEvent.click(screen.getByLabelText('Open settings'));
-    expect(screen.getByText('Event Type Rules')).toBeInTheDocument();
+    await userEvent.click(screen.getByLabelText('Menu'));
+    await userEvent.click(screen.getByRole('menuitem', { name: /Modèles d'événements/ }));
+    expect(screen.getByText("Modèles d'événements")).toBeInTheDocument();
   });
 
   it('closes the settings panel when close button is clicked', async () => {
     render(<App />);
-    await userEvent.click(screen.getByLabelText('Open settings'));
-    expect(screen.getByText('Event Type Rules')).toBeInTheDocument();
+    await userEvent.click(screen.getByLabelText('Menu'));
+    await userEvent.click(screen.getByRole('menuitem', { name: /Modèles d'événements/ }));
+    expect(screen.getByText("Modèles d'événements")).toBeInTheDocument();
 
-    await userEvent.click(screen.getByLabelText('Close settings'));
-    expect(screen.queryByText('Event Type Rules')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByLabelText('Fermer les modèles'));
+    // The heading inside the settings panel should be gone
+    expect(screen.queryByLabelText('Fermer les modèles')).not.toBeInTheDocument();
   });
 
   it('toggles sidebar visibility', async () => {
@@ -90,7 +96,18 @@ describe('App', () => {
     const sidebar = document.querySelector('.sidebar');
     expect(sidebar).toHaveClass('sidebar--closed');
 
-    await userEvent.click(screen.getByLabelText('Open sidebar'));
+    await userEvent.click(screen.getByLabelText('Ouvrir le panneau'));
     expect(sidebar).toHaveClass('sidebar--open');
+  });
+
+  it('highlights the clicked day with day-cell--selected', async () => {
+    render(<App />);
+    // Click a day cell that is not already today (pick the first .day-cell)
+    const cells = document.querySelectorAll('.day-cell');
+    expect(cells.length).toBeGreaterThan(0);
+
+    // Before clicking, at most one cell (today) may be selected (initial state)
+    await userEvent.click(cells[2]);
+    expect(cells[2]).toHaveClass('day-cell--selected');
   });
 });

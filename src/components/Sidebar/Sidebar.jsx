@@ -10,6 +10,8 @@
  */
 
 import { formatFullDate, formatISO } from '../../utils/dateUtils';
+import { eventCoversDate } from '../../utils/eventModel';
+import { exportAllEvents } from '../../utils/icsExporter';
 import EventList from '../EventList';
 
 export default function Sidebar({
@@ -22,7 +24,7 @@ export default function Sidebar({
 }) {
   const dateISO = formatISO(selectedDate);
   const dayEvents = events
-    .filter((ev) => ev.date === dateISO)
+    .filter((ev) => eventCoversDate(ev, dateISO))
     .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
 
   const sidebarClasses = [
@@ -41,27 +43,40 @@ export default function Sidebar({
         />
       )}
 
-      <aside className={sidebarClasses} aria-label="Day detail">
+      <aside className={sidebarClasses} aria-label="Détail du jour">
         {/* ---- Date heading ---- */}
         <div className="sidebar__section">
-          <p className="sidebar__heading">Selected Day</p>
+          <p className="sidebar__heading">Jour sélectionné</p>
           <p className="sidebar__date">{formatFullDate(selectedDate)}</p>
           <button
             className="btn btn--primary"
             onClick={onNewEvent}
             style={{ width: '100%' }}
           >
-            + New Event
+            + Nouvel événement
           </button>
         </div>
 
         {/* ---- Event list ---- */}
         <div className="sidebar__section">
           <p className="sidebar__heading">
-            Events ({dayEvents.length})
+            Événements ({dayEvents.length})
           </p>
           <EventList events={dayEvents} onEventClick={onEventClick} />
         </div>
+
+        {/* ---- Export all ---- */}
+        {events.length > 0 && (
+          <div className="sidebar__section">
+            <button
+              className="btn btn--outline"
+              style={{ width: '100%' }}
+              onClick={() => exportAllEvents(events)}
+            >
+              ⬇ Exporter tous les événements (.ics)
+            </button>
+          </div>
+        )}
       </aside>
     </>
   );

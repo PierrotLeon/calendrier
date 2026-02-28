@@ -22,9 +22,9 @@ const defaultProps = {
 };
 
 describe('CalendarHeader', () => {
-  it('displays the current month and year', () => {
+  it('displays the current month and year in French', () => {
     render(<CalendarHeader {...defaultProps} />);
-    expect(screen.getByText('February 2026')).toBeInTheDocument();
+    expect(screen.getByText('Février 2026')).toBeInTheDocument();
   });
 
   it('displays the brand name', () => {
@@ -35,60 +35,63 @@ describe('CalendarHeader', () => {
   it('calls onPrev when the back button is clicked', async () => {
     const onPrev = vi.fn();
     render(<CalendarHeader {...defaultProps} onPrev={onPrev} />);
-    await userEvent.click(screen.getByLabelText('Previous'));
+    await userEvent.click(screen.getByLabelText('Précédent'));
     expect(onPrev).toHaveBeenCalledOnce();
   });
 
   it('calls onNext when the forward button is clicked', async () => {
     const onNext = vi.fn();
     render(<CalendarHeader {...defaultProps} onNext={onNext} />);
-    await userEvent.click(screen.getByLabelText('Next'));
+    await userEvent.click(screen.getByLabelText('Suivant'));
     expect(onNext).toHaveBeenCalledOnce();
   });
 
-  it('calls onToday when the Today button is clicked', async () => {
+  it('calls onToday when the Aujourd\'hui button is clicked', async () => {
     const onToday = vi.fn();
     render(<CalendarHeader {...defaultProps} onToday={onToday} />);
-    await userEvent.click(screen.getByText('Today'));
+    await userEvent.click(screen.getByText("Aujourd'hui"));
     expect(onToday).toHaveBeenCalledOnce();
   });
 
-  it('calls onViewChange with WEEK when Week button is clicked', async () => {
+  it('opens the menu and switches to Semaine view', async () => {
     const onViewChange = vi.fn();
     render(<CalendarHeader {...defaultProps} onViewChange={onViewChange} />);
-    await userEvent.click(screen.getByText('Week'));
+    await userEvent.click(screen.getByLabelText('Menu'));
+    await userEvent.click(screen.getByText('Semaine'));
     expect(onViewChange).toHaveBeenCalledWith(VIEW_MODES.WEEK);
   });
 
-  it('highlights the active view mode', () => {
+  it('highlights the active view mode in the menu', async () => {
     render(<CalendarHeader {...defaultProps} viewMode={VIEW_MODES.WEEK} />);
-    expect(screen.getByText('Week')).toHaveClass('view-toggle__btn--active');
-    expect(screen.getByText('Month')).not.toHaveClass('view-toggle__btn--active');
+    await userEvent.click(screen.getByLabelText('Menu'));
+    expect(screen.getByText('Semaine')).toHaveClass('header-menu__item--active');
+    expect(screen.getByText('Mois')).not.toHaveClass('header-menu__item--active');
   });
 
   it('calls onToggleSidebar when sidebar toggle is clicked', async () => {
     const onToggleSidebar = vi.fn();
     render(<CalendarHeader {...defaultProps} onToggleSidebar={onToggleSidebar} />);
-    await userEvent.click(screen.getByLabelText('Open sidebar'));
+    await userEvent.click(screen.getByLabelText('Ouvrir le panneau'));
     expect(onToggleSidebar).toHaveBeenCalledOnce();
   });
 
-  it('calls onOpenSettings when settings button is clicked', async () => {
+  it('opens settings (templates) from the menu', async () => {
     const onOpenSettings = vi.fn();
     render(<CalendarHeader {...defaultProps} onOpenSettings={onOpenSettings} />);
-    await userEvent.click(screen.getByLabelText('Open settings'));
+    await userEvent.click(screen.getByLabelText('Menu'));
+    await userEvent.click(screen.getByText(/Modèles d'événements/));
     expect(onOpenSettings).toHaveBeenCalledOnce();
   });
 
   it('shows close icon when sidebar is open', () => {
     render(<CalendarHeader {...defaultProps} isSidebarOpen={true} />);
-    const toggle = screen.getByLabelText('Close sidebar');
+    const toggle = screen.getByLabelText('Fermer le panneau');
     expect(toggle.textContent).toBe('✕');
   });
 
   it('shows hamburger icon when sidebar is closed', () => {
     render(<CalendarHeader {...defaultProps} isSidebarOpen={false} />);
-    const toggle = screen.getByLabelText('Open sidebar');
+    const toggle = screen.getByLabelText('Ouvrir le panneau');
     expect(toggle.textContent).toBe('☰');
   });
 });

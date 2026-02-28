@@ -65,7 +65,7 @@
 
 /* Header adjustments for small screens */
 .header {
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
   gap: var(--space-1);
 }
 
@@ -78,19 +78,76 @@
   min-width: 8rem;
 }
 
-/* Calendar grid: reduce cell height */
+/* ---- No-scroll month grid on mobile ---- */
+/* The app shell and main area must NOT scroll.
+   The calendar grid fills the remaining vertical space. */
+.app {
+  overflow: hidden;
+}
+
+.app__main {
+  padding: var(--space-1);
+  overflow: hidden;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.calendar-grid__days {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  /* Rows auto-distribute to fill vertical space */
+  grid-auto-rows: 1fr;
+}
+
+/* Calendar grid: compact cells on mobile */
 .day-cell {
-  min-height: 3.5rem;
+  min-height: 0;
+  padding: 1px;
 }
 
 .day-cell__number {
-  width: 1.4rem;
-  height: 1.4rem;
-  font-size: var(--font-size-xs);
+  width: 1.2rem;
+  height: 1.2rem;
+  font-size: 0.65rem;
+  margin-bottom: 0;
 }
 
 .event-chip {
-  font-size: 0.625rem;
+  font-size: 0.5rem;
+  padding: 0 2px;
+  line-height: 1.2;
+}
+
+.day-cell__more {
+  font-size: 0.5rem;
+}
+
+/* Week grid: compact on mobile */
+.week-grid__header {
+  grid-template-columns: 2.5rem repeat(7, 1fr);
+}
+
+.week-grid__body {
+  grid-template-columns: 2.5rem repeat(7, 1fr);
+}
+
+.week-grid__day-header {
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) 1px;
+}
+
+.week-grid__hour-label {
+  font-size: 0.6rem;
+  height: 2rem;
+}
+
+.week-grid__hour-slot {
+  height: 2rem;
 }
 
 /* Modal: full-width on mobile */
@@ -121,16 +178,18 @@
   }
 
   .day-cell {
-    min-height: 4rem;
+    min-height: 0;
+    padding: 2px;
   }
 
   .day-cell__number {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: var(--font-size-xs);
   }
 
   .event-chip {
-    font-size: var(--font-size-xs);
+    font-size: 0.6rem;
   }
 }
 
@@ -152,8 +211,23 @@
     display: inline; /* show brand again */
   }
 
+  .app__main {
+    padding: var(--space-2);
+  }
+
   .day-cell {
-    min-height: 5rem;
+    min-height: 0;
+    padding: var(--space-1);
+  }
+
+  .day-cell__number {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: var(--font-size-sm);
+  }
+
+  .event-chip {
+    font-size: var(--font-size-xs);
   }
 
   .modal-overlay {
@@ -207,8 +281,20 @@
     display: inline;
   }
 
+  .app__main {
+    padding: var(--space-4);
+    overflow: auto;
+  }
+
   .day-cell {
     min-height: 5.5rem;
+    padding: var(--space-1);
+  }
+
+  .day-cell__number {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: var(--font-size-sm);
   }
 
   .settings-panel {

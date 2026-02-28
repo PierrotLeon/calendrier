@@ -93,8 +93,10 @@ export default function App() {
           <CalendarGrid
             days={calendar.days}
             currentDate={calendar.currentDate}
+            selectedDate={selectedDate}
             events={events}
             onDayClick={handleDayClick}
+            viewMode={calendar.viewMode}
           />
         </main>
       </div>

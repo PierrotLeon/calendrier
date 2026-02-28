@@ -1,12 +1,12 @@
 /**
  * @component SettingsPanel
- * @description Slide-over panel for managing event-type rules.
+ * @description Slide-over panel for managing event templates.
  *
- * Each rule defines a regex pattern, a colour, and optional default times.
- * When a new event's title matches a rule's pattern, the modal will
- * softly suggest the rule's colour and time.
+ * Each template defines a regex pattern, a colour, and optional default times.
+ * When a new event's title matches a template's pattern, the modal will
+ * softly suggest the template's colour and time.
  *
- * Users can add, edit, delete, toggle, and reset rules from this panel.
+ * Users can add, edit, delete, toggle, and reset templates from this panel.
  */
 
 import { useState } from 'react';
@@ -24,7 +24,7 @@ export default function SettingsPanel({
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({});
 
-  /* ---- Begin editing a rule inline ---- */
+  /* ---- Begin editing a template inline ---- */
   const startEditing = (rule) => {
     setEditingId(rule.id);
     setDraft({ ...rule });
@@ -45,18 +45,16 @@ export default function SettingsPanel({
     setDraft({});
   };
 
-  /* ---- Add a blank rule and start editing it ---- */
+  /* ---- Add a blank template and start editing it ---- */
   const handleAdd = () => {
     const ruleData = {
-      name: 'New Rule',
-      pattern: '\\b(keyword)\\b',
+      name: 'Nouveau modèle',
+      pattern: '\\b(mot-clé)\\b',
       color: EVENT_COLORS[0].value,
       startTime: '',
       endTime: '',
       enabled: true,
     };
-    // onAddRule returns the created rule (with generated id).
-    // If it doesn't, we still call it and skip inline editing.
     const newRule = onAddRule(ruleData);
     if (newRule && newRule.id) {
       startEditing(newRule);
@@ -70,8 +68,8 @@ export default function SettingsPanel({
       <div className="settings-panel" onClick={(e) => e.stopPropagation()}>
         {/* ---- Header ---- */}
         <div className="settings-panel__header">
-          <h2 className="modal__title">Event Type Rules</h2>
-          <button className="btn btn--icon" onClick={onClose} aria-label="Close settings">
+          <h2 className="modal__title">Modèles d'événements</h2>
+          <button className="btn btn--icon" onClick={onClose} aria-label="Fermer les modèles">
             ✕
           </button>
         </div>
@@ -79,12 +77,13 @@ export default function SettingsPanel({
         {/* ---- Description ---- */}
         <div className="settings-panel__body">
           <p className="settings-panel__desc">
-            Define rules to auto-suggest colours and times when creating events.
-            Patterns are matched as <strong>case-insensitive regex</strong> against
-            the event title and description.
+            Définissez des modèles pour suggérer automatiquement une couleur et
+            un horaire lors de la création d'événements. Les motifs sont des
+            <strong> expressions régulières</strong> insensibles à la casse,
+            testées sur le titre et la description.
           </p>
 
-          {/* ---- Rule list ---- */}
+          {/* ---- Template list ---- */}
           <div className="settings-panel__rules" role="list">
             {rules.map((rule) => (
               <div key={rule.id} className="rule-card" role="listitem">
@@ -93,7 +92,7 @@ export default function SettingsPanel({
                   <div className="rule-card__edit">
                     <div className="form-field">
                       <label className="form-field__label" htmlFor={`rule-name-${rule.id}`}>
-                        Name
+                        Nom
                       </label>
                       <input
                         id={`rule-name-${rule.id}`}
@@ -101,13 +100,13 @@ export default function SettingsPanel({
                         type="text"
                         value={draft.name || ''}
                         onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                        placeholder="Rule name"
+                        placeholder="Nom du modèle"
                       />
                     </div>
 
                     <div className="form-field">
                       <label className="form-field__label" htmlFor={`rule-pattern-${rule.id}`}>
-                        Regex Pattern
+                        Expression régulière
                       </label>
                       <input
                         id={`rule-pattern-${rule.id}`}
@@ -115,12 +114,12 @@ export default function SettingsPanel({
                         type="text"
                         value={draft.pattern || ''}
                         onChange={(e) => setDraft({ ...draft, pattern: e.target.value })}
-                        placeholder="\\b(keyword)\\b"
+                        placeholder="\\b(mot-clé)\\b"
                       />
                     </div>
 
                     <div className="form-field">
-                      <span className="form-field__label">Colour</span>
+                      <span className="form-field__label">Couleur</span>
                       <div className="color-picker">
                         {EVENT_COLORS.map((c) => (
                           <button
@@ -139,7 +138,7 @@ export default function SettingsPanel({
                     <div className="form-field__row">
                       <div className="form-field">
                         <label className="form-field__label" htmlFor={`rule-start-${rule.id}`}>
-                          Default Start
+                          Début par défaut
                         </label>
                         <input
                           id={`rule-start-${rule.id}`}
@@ -151,7 +150,7 @@ export default function SettingsPanel({
                       </div>
                       <div className="form-field">
                         <label className="form-field__label" htmlFor={`rule-end-${rule.id}`}>
-                          Default End
+                          Fin par défaut
                         </label>
                         <input
                           id={`rule-end-${rule.id}`}
@@ -165,15 +164,15 @@ export default function SettingsPanel({
 
                     <div className="rule-card__actions">
                       <button className="btn btn--primary btn--sm" onClick={saveEdit}>
-                        Save
+                        Enregistrer
                       </button>
                       <button className="btn btn--sm" onClick={cancelEdit}>
-                        Cancel
+                        Annuler
                       </button>
                     </div>
                   </div>
                 ) : (
-                  /* ---- Read-only rule display ---- */
+                  /* ---- Read-only template display ---- */
                   <div className="rule-card__display">
                     <div className="rule-card__header">
                       <div
@@ -181,12 +180,12 @@ export default function SettingsPanel({
                         style={{ backgroundColor: rule.color }}
                       />
                       <span className="rule-card__name">{rule.name}</span>
-                      <label className="rule-card__toggle" title={rule.enabled ? 'Enabled' : 'Disabled'}>
+                      <label className="rule-card__toggle" title={rule.enabled ? 'Activé' : 'Désactivé'}>
                         <input
                           type="checkbox"
                           checked={rule.enabled}
                           onChange={(e) => onUpdateRule(rule.id, { enabled: e.target.checked })}
-                          aria-label={`Toggle ${rule.name}`}
+                          aria-label={`Activer ${rule.name}`}
                         />
                         <span className="rule-card__toggle-label">
                           {rule.enabled ? 'On' : 'Off'}
@@ -201,13 +200,13 @@ export default function SettingsPanel({
                     )}
                     <div className="rule-card__actions">
                       <button className="btn btn--sm" onClick={() => startEditing(rule)}>
-                        Edit
+                        Modifier
                       </button>
                       <button
                         className="btn btn--sm btn--danger"
                         onClick={() => onDeleteRule(rule.id)}
                       >
-                        Delete
+                        Supprimer
                       </button>
                     </div>
                   </div>
@@ -220,10 +219,10 @@ export default function SettingsPanel({
         {/* ---- Footer ---- */}
         <div className="settings-panel__footer">
           <button className="btn" onClick={onResetDefaults}>
-            Reset to Defaults
+            Réinitialiser
           </button>
           <button className="btn btn--primary" onClick={handleAdd}>
-            + Add Rule
+            + Ajouter un modèle
           </button>
         </div>
       </div>

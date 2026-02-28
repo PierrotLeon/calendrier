@@ -26,7 +26,8 @@ export default function EventModal({
 }) {
   /* ---- Local form state ---- */
   const [title, setTitle] = useState('');
-  const [date, setDate] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [description, setDescription] = useState('');
@@ -46,14 +47,18 @@ export default function EventModal({
   useEffect(() => {
     if (initialData) {
       setTitle(initialData.title || '');
-      setDate(initialData.date || '');
+      const iDate = initialData.startDate || initialData.date || '';
+      setStartDate(iDate);
+      setEndDate(initialData.endDate || iDate);
       setStartTime(initialData.startTime || '');
       setEndTime(initialData.endTime || '');
       setDescription(initialData.description || '');
       setColor(initialData.color || DEFAULT_EVENT_COLOR);
     } else {
       setTitle('');
-      setDate(selectedDate ? formatISO(selectedDate) : '');
+      const defaultDate = selectedDate ? formatISO(selectedDate) : '';
+      setStartDate(defaultDate);
+      setEndDate(defaultDate);
       setStartTime('');
       setEndTime('');
       setDescription('');
@@ -101,7 +106,16 @@ export default function EventModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const eventData = { title, date, startTime, endTime, description, color };
+    const eventData = {
+      title,
+      startDate,
+      endDate: endDate || startDate,
+      date: startDate,      // legacy alias
+      startTime,
+      endTime,
+      description,
+      color,
+    };
     const validationErrors = validateEvent(eventData);
 
     if (validationErrors.length > 0) {
@@ -128,12 +142,12 @@ export default function EventModal({
         {/* ---- Header ---- */}
         <div className="modal__header">
           <h2 className="modal__title">
-            {isEditing ? 'Edit Event' : 'New Event'}
+            {isEditing ? 'Modifier l\'événement' : 'Nouvel événement'}
           </h2>
           <button
             className="btn btn--icon"
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label="Fermer"
           >
             ✕
           </button>
@@ -157,8 +171,8 @@ export default function EventModal({
                 <div className="suggestion-banner__body">
                   <span className="suggestion-banner__icon">💡</span>
                   <span className="suggestion-banner__text">
-                    Looks like <strong>{suggestion.ruleName}</strong> — apply suggested colour
-                    {suggestion.startTime ? ' & time' : ''}?
+                  Ressemble à <strong>{suggestion.ruleName}</strong> — appliquer la couleur
+                    {suggestion.startTime ? ' et l\'horaire' : ''} suggérés ?
                   </span>
                 </div>
                 <div className="suggestion-banner__actions">
@@ -167,23 +181,23 @@ export default function EventModal({
                     className="btn btn--sm btn--primary"
                     onClick={acceptSuggestion}
                   >
-                    Apply
+                    Appliquer
                   </button>
                   <button
                     type="button"
                     className="btn btn--sm"
                     onClick={dismissSuggestion}
                   >
-                    Dismiss
+                    Ignorer
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Title */}
+            {/* Titre */}
             <div className="form-field">
               <label className="form-field__label" htmlFor="event-title">
-                Title
+                Titre
               </label>
               <input
                 id="event-title"
@@ -191,30 +205,52 @@ export default function EventModal({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Event title"
+                placeholder="Titre de l'événement"
                 autoFocus
               />
             </div>
 
-            {/* Date */}
-            <div className="form-field">
-              <label className="form-field__label" htmlFor="event-date">
-                Date
-              </label>
-              <input
-                id="event-date"
-                className="form-field__input"
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
+            {/* Plage de dates */}
+            <div className="form-field__row">
+              <div className="form-field">
+                <label className="form-field__label" htmlFor="event-start-date">
+                  Date de début
+                </label>
+                <input
+                  id="event-start-date"
+                  className="form-field__input"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => {
+                    const newStart = e.target.value;
+                    setStartDate(newStart);
+                    // Keep end date >= start date
+                    if (endDate && newStart > endDate) {
+                      setEndDate(newStart);
+                    }
+                  }}
+                />
+              </div>
+              <div className="form-field">
+                <label className="form-field__label" htmlFor="event-end-date">
+                  Date de fin
+                </label>
+                <input
+                  id="event-end-date"
+                  className="form-field__input"
+                  type="date"
+                  value={endDate}
+                  min={startDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
             </div>
 
-            {/* Time range */}
+            {/* Plage horaire */}
             <div className="form-field__row">
               <div className="form-field">
                 <label className="form-field__label" htmlFor="event-start">
-                  Start time
+                  Heure de début
                 </label>
                 <input
                   id="event-start"
@@ -229,7 +265,7 @@ export default function EventModal({
               </div>
               <div className="form-field">
                 <label className="form-field__label" htmlFor="event-end">
-                  End time
+                  Heure de fin
                 </label>
                 <input
                   id="event-end"
@@ -254,14 +290,14 @@ export default function EventModal({
                 className="form-field__textarea"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Optional description…"
+                placeholder="Description optionnelle…"
                 rows={3}
               />
             </div>
 
             {/* Colour picker */}
             <div className="form-field">
-              <span className="form-field__label">Colour</span>
+              <span className="form-field__label">Couleur</span>
               <div className="color-picker">
                 {EVENT_COLORS.map((c) => (
                   <button
@@ -289,14 +325,14 @@ export default function EventModal({
                 className="btn btn--danger"
                 onClick={handleDelete}
               >
-                Delete
+                Supprimer
               </button>
             )}
             <button type="button" className="btn" onClick={onClose}>
-              Cancel
+              Annuler
             </button>
             <button type="submit" className="btn btn--primary">
-              {isEditing ? 'Update' : 'Create'}
+              {isEditing ? 'Modifier' : 'Créer'}
             </button>
           </div>
         </form>

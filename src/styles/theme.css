@@ -22,6 +22,12 @@
 
   --color-success:        #059669;
 
+  /* ---- Calendar-specific ---- */
+  --color-today-bg:       #E0E7FF;   /* soft indigo for today's cell  */
+  --color-hover-bg:       #F1F5F9;   /* neutral slate for hover       */
+  --color-selected-ring:  #6366F1;   /* indigo ring around selected   */
+  --color-selected-bg:    #EEF2FF;   /* very light fill for selected  */
+
   /* ---- Surfaces ---- */
   --color-bg:             #F8FAFC;
   --color-surface:        #FFFFFF;

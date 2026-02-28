@@ -16,7 +16,7 @@ const mockEvents = [
 describe('EventList', () => {
   it('renders an empty message when there are no events', () => {
     render(<EventList events={[]} onEventClick={vi.fn()} />);
-    expect(screen.getByText(/no events/i)).toBeInTheDocument();
+    expect(screen.getByText(/aucun événement/i)).toBeInTheDocument();
   });
 
   it('renders all event cards', () => {

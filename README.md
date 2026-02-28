@@ -2,7 +2,7 @@
 
 A fully functional, production-grade calendar application built with **React 19**, **Vite**, and **date-fns**.
 
-![React](https://img.shields.io/badge/React-19-blue) ![Vite](https://img.shields.io/badge/Vite-7-purple) ![Tests](https://img.shields.io/badge/Tests-132%20passing-green)
+![React](https://img.shields.io/badge/React-19-blue) ![Vite](https://img.shields.io/badge/Vite-7-purple) ![Tests](https://img.shields.io/badge/Tests-184%20passing-green)
 
 ---
 
@@ -10,12 +10,16 @@ A fully functional, production-grade calendar application built with **React 19*
 
 - **Month & Week views** — toggle between a full month grid and a focused week strip.
 - **Event CRUD** — create, read, update, and delete events through a modal form.
+- **Multi-day events** — events can span multiple days with a start and end date. Multi-day chips render with connected start/middle/end styling across the calendar grid.
 - **Colour-coded events** — pick from 7 pre-defined colours for visual categorisation.
+- **ICS export** — export individual events or all events as RFC 5545 compliant `.ics` files for import into Google Calendar, Outlook, Apple Calendar, etc.
 - **Persistent storage** — events are saved to `localStorage` and survive page reloads.
 - **Sidebar day detail** — click any day to see its events listed in the sidebar.
+- **24-hour time format** — European-style HH:mm time throughout the application.
 - **Keyboard accessible** — all interactive elements are focusable and operable via keyboard.
 - **Themeable** — all visual tokens (colours, spacing, typography) are CSS custom properties in a single file.
-- **Responsive layouts** — mobile-first CSS for Samsung Galaxy (360 px), Fairphone 4 (394 px), tablets (768 px), and desktop (1024 px+). Sidebar collapses to an overlay on mobile.
+- **Responsive layouts** — mobile-first CSS for Samsung Galaxy (360 px), Fairphone 4 (414 px), tablets (768 px), and desktop (1024 px+). Sidebar collapses to an overlay on mobile.
+- **Device preview** — a dedicated preview page (`/preview.html`) renders the app in iframes at phone portrait/landscape and tablet portrait/landscape sizes.
 - **Settings panel** — define event-type rules with regex patterns, colours, and default times.
 - **Soft autofill** — when creating an event, the rule engine suggests a colour and time based on the title. Suggestions appear as a dismissible banner and never override manual input.
 
@@ -27,6 +31,10 @@ npm install
 
 # Start the dev server (http://localhost:5173)
 npm run dev
+
+# Open the device preview directly (dev tool — not part of the app)
+npm run dev:preview
+# → Opens http://localhost:5173/preview.html with phone, tablet & desktop iframes
 
 # Run the test suite
 npm test
@@ -58,7 +66,8 @@ src/
 │   └── storageService.js
 ├── utils/               # Pure utility functions
 │   ├── dateUtils.js
-│   ├── eventModel.js
+│   ├── eventModel.js   # Event factory, validation, multi-day helpers
+│   ├── icsExporter.js  # RFC 5545 .ics file generation & download
 │   └── ruleEngine.js
 ├── constants/           # App-wide constants & configuration
 │   └── index.js
@@ -66,7 +75,6 @@ src/
 │   ├── theme.css
 │   ├── components.css
 │   └── responsive.css
-│   └── components.css
 ├── tests/               # Vitest + React Testing Library tests
 │   ├── components/
 │   ├── hooks/
@@ -75,6 +83,7 @@ src/
 ├── App.jsx              # Root component
 ├── main.jsx             # Entry point
 └── index.css            # Global reset + style imports
+preview.html             # Device-preview page (phone/tablet iframes)
 ```
 
 ## 🎨 Customising the Theme
@@ -96,14 +105,15 @@ The test suite covers:
 
 ## 📄 Scripts
 
-| Script             | Description                          |
-| ------------------ | ------------------------------------ |
-| `npm run dev`      | Start Vite dev server with HMR       |
-| `npm run build`    | Production build to `dist/`          |
-| `npm run preview`  | Preview the production build locally |
-| `npm run lint`     | Run ESLint                           |
-| `npm test`         | Run Vitest test suite                |
-| `npm run test:watch` | Vitest in watch mode               |
+| Script               | Description                                                                 |
+| -------------------- | --------------------------------------------------------------------------- |
+| `npm run dev`        | Start Vite dev server with HMR                                              |
+| `npm run dev:preview`| Start dev server and open the device preview page (phone/tablet/desktop)    |
+| `npm run build`      | Production build to `dist/`                                                 |
+| `npm run preview`    | Preview the production build locally                                        |
+| `npm run lint`       | Run ESLint                                                                  |
+| `npm test`           | Run Vitest test suite                                                       |
+| `npm run test:watch` | Vitest in watch mode                                                        |
 
 ## 📚 Further Reading
 

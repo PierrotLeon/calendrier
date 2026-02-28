@@ -4,7 +4,12 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { createEvent, validateEvent } from '../../utils/eventModel';
+import {
+  createEvent,
+  validateEvent,
+  isMultiDay,
+  eventCoversDate,
+} from '../../utils/eventModel';
 import { DEFAULT_EVENT_COLOR } from '../../constants';
 
 describe('eventModel', () => {
@@ -34,6 +39,25 @@ describe('eventModel', () => {
       expect(ev.createdAt).toBeTruthy();
       expect(() => new Date(ev.createdAt)).not.toThrow();
     });
+
+    it('sets startDate and endDate from date', () => {
+      const ev = createEvent({ title: 'T', date: '2026-05-10' });
+      expect(ev.startDate).toBe('2026-05-10');
+      expect(ev.endDate).toBe('2026-05-10');
+      expect(ev.date).toBe('2026-05-10');
+    });
+
+    it('sets startDate and endDate from explicit startDate', () => {
+      const ev = createEvent({ title: 'T', startDate: '2026-05-10', endDate: '2026-05-12' });
+      expect(ev.startDate).toBe('2026-05-10');
+      expect(ev.endDate).toBe('2026-05-12');
+      expect(ev.date).toBe('2026-05-10');
+    });
+
+    it('defaults endDate to startDate when not provided', () => {
+      const ev = createEvent({ title: 'T', startDate: '2026-05-10' });
+      expect(ev.endDate).toBe('2026-05-10');
+    });
   });
 
   describe('validateEvent', () => {
@@ -44,7 +68,7 @@ describe('eventModel', () => {
 
     it('requires a title', () => {
       const errors = validateEvent({ title: '', date: '2026-03-01' });
-      expect(errors.some((e) => e.toLowerCase().includes('title'))).toBe(true);
+      expect(errors.some((e) => e.toLowerCase().includes('titre'))).toBe(true);
     });
 
     it('requires a date', () => {
@@ -52,14 +76,15 @@ describe('eventModel', () => {
       expect(errors.some((e) => e.toLowerCase().includes('date'))).toBe(true);
     });
 
-    it('rejects end time before start time', () => {
+    it('rejects end time before start time on same day', () => {
       const errors = validateEvent({
         title: 'Bad range',
+        startDate: '2026-03-01',
         date: '2026-03-01',
         startTime: '14:00',
         endTime: '13:00',
       });
-      expect(errors.some((e) => e.toLowerCase().includes('end time'))).toBe(true);
+      expect(errors.some((e) => e.toLowerCase().includes('heure de fin'))).toBe(true);
     });
 
     it('accepts missing times', () => {
@@ -70,6 +95,88 @@ describe('eventModel', () => {
         endTime: '',
       });
       expect(errors).toHaveLength(0);
+    });
+
+    it('rejects endDate before startDate', () => {
+      const errors = validateEvent({
+        title: 'Bad range',
+        startDate: '2026-03-05',
+        endDate: '2026-03-02',
+      });
+      expect(errors.some((e) => e.toLowerCase().includes('date de fin'))).toBe(true);
+    });
+
+    it('accepts endDate equal to startDate', () => {
+      const errors = validateEvent({
+        title: 'Same day',
+        startDate: '2026-03-05',
+        endDate: '2026-03-05',
+      });
+      expect(errors).toHaveLength(0);
+    });
+
+    it('allows endTime before startTime on multi-day events', () => {
+      const errors = validateEvent({
+        title: 'Multi',
+        startDate: '2026-03-01',
+        endDate: '2026-03-03',
+        startTime: '22:00',
+        endTime: '08:00',
+      });
+      expect(errors).toHaveLength(0);
+    });
+  });
+
+  describe('isMultiDay', () => {
+    it('returns false for single-day events', () => {
+      expect(isMultiDay({ startDate: '2026-03-01', endDate: '2026-03-01' })).toBe(false);
+    });
+
+    it('returns true when endDate > startDate', () => {
+      expect(isMultiDay({ startDate: '2026-03-01', endDate: '2026-03-03' })).toBe(true);
+    });
+
+    it('returns false when dates are missing', () => {
+      expect(isMultiDay({})).toBe(false);
+    });
+  });
+
+  describe('eventCoversDate', () => {
+    const singleDay = { startDate: '2026-03-05', endDate: '2026-03-05', date: '2026-03-05' };
+    const multiDay = { startDate: '2026-03-05', endDate: '2026-03-08', date: '2026-03-05' };
+
+    it('matches exact date for single-day event', () => {
+      expect(eventCoversDate(singleDay, '2026-03-05')).toBe(true);
+    });
+
+    it('rejects non-matching date for single-day event', () => {
+      expect(eventCoversDate(singleDay, '2026-03-06')).toBe(false);
+    });
+
+    it('matches start date of multi-day event', () => {
+      expect(eventCoversDate(multiDay, '2026-03-05')).toBe(true);
+    });
+
+    it('matches end date of multi-day event', () => {
+      expect(eventCoversDate(multiDay, '2026-03-08')).toBe(true);
+    });
+
+    it('matches middle date of multi-day event', () => {
+      expect(eventCoversDate(multiDay, '2026-03-06')).toBe(true);
+    });
+
+    it('rejects date before multi-day event', () => {
+      expect(eventCoversDate(multiDay, '2026-03-04')).toBe(false);
+    });
+
+    it('rejects date after multi-day event', () => {
+      expect(eventCoversDate(multiDay, '2026-03-09')).toBe(false);
+    });
+
+    it('falls back to legacy date field', () => {
+      const legacy = { date: '2026-03-05' };
+      expect(eventCoversDate(legacy, '2026-03-05')).toBe(true);
+      expect(eventCoversDate(legacy, '2026-03-06')).toBe(false);
     });
   });
 });

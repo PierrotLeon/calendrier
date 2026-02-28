@@ -82,7 +82,7 @@ describe('useSettings', () => {
     // Default rules include one for "meeting"
     const suggestion = result.current.getAutoSuggestion('Team Meeting', '');
     expect(suggestion).not.toBeNull();
-    expect(suggestion.ruleName).toBe('Meeting');
+    expect(suggestion.ruleName).toBe('Réunion');
   });
 
   it('getAutoSuggestion returns null when no rule matches', () => {
