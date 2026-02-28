@@ -23,6 +23,7 @@ export default function EventModal({
   onDelete,
   onClose,
   getAutoSuggestion,
+  allColors,
 }) {
   /* ---- Local form state ---- */
   const [title, setTitle] = useState('');
@@ -299,7 +300,7 @@ export default function EventModal({
             <div className="form-field">
               <span className="form-field__label">Couleur</span>
               <div className="color-picker">
-                {EVENT_COLORS.map((c) => (
+                {(allColors || EVENT_COLORS).map((c) => (
                   <button
                     key={c.value}
                     type="button"

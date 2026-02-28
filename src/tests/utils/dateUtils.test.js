@@ -21,6 +21,7 @@ import {
   isToday,
   safeParseISO,
   toStartOfDay,
+  isWeekend,
 } from '../../utils/dateUtils';
 
 /* Fixed reference date: Saturday, February 28, 2026 */
@@ -168,6 +169,28 @@ describe('dateUtils', () => {
       expect(result.getHours()).toBe(0);
       expect(result.getMinutes()).toBe(0);
       expect(result.getSeconds()).toBe(0);
+    });
+  });
+
+  /* ---- isWeekend ---- */
+
+  describe('isWeekend', () => {
+    it('returns true for Saturday', () => {
+      // 2026-02-28 is a Saturday
+      expect(isWeekend(new Date(2026, 1, 28))).toBe(true);
+    });
+
+    it('returns true for Sunday', () => {
+      // 2026-03-01 is a Sunday
+      expect(isWeekend(new Date(2026, 2, 1))).toBe(true);
+    });
+
+    it('returns false for Monday', () => {
+      expect(isWeekend(new Date(2026, 2, 2))).toBe(false);
+    });
+
+    it('returns false for Wednesday', () => {
+      expect(isWeekend(new Date(2026, 1, 25))).toBe(false);
     });
   });
 });

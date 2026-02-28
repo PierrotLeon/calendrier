@@ -2,10 +2,9 @@
  * @component App
  * @description Root component of the Calendrier application.
  *
- * Composes the calendar header, grid, sidebar, event modal, and settings
- * panel into a cohesive, responsive layout. Owns the top-level state by
- * delegating to custom hooks (`useCalendar`, `useEvents`, `useModal`,
- * `useSettings`).
+ * Composes the calendar header, grid, sidebar, event modal, settings
+ * panel, and colour palette panel into a cohesive, responsive layout.
+ * Owns the top-level state by delegating to custom hooks.
  */
 
 import { useState } from 'react';
@@ -15,11 +14,15 @@ import {
   Sidebar,
   EventModal,
   SettingsPanel,
+  ColorPalettePanel,
 } from './components';
 import { useCalendar } from './hooks/useCalendar';
 import { useEvents } from './hooks/useEvents';
 import { useModal } from './hooks/useModal';
 import { useSettings } from './hooks/useSettings';
+import { useHolidays } from './hooks/useHolidays';
+import { useCustomColors } from './hooks/useCustomColors';
+import { parseICS } from './utils/icsImporter';
 
 export default function App() {
   /* ---- State ---- */
@@ -28,15 +31,24 @@ export default function App() {
   const modal = useModal();
   const settingsModal = useModal();
   const settings = useSettings();
+  const { holidays } = useHolidays();
+  const { customColors, allColors, addColor, removeColor } = useCustomColors();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [sidebarOpen, setSidebarOpen] = useState(false); // closed by default on mobile
+  const [colorPanelOpen, setColorPanelOpen] = useState(false);
 
   /* ---- Handlers ---- */
 
   /** When a day cell is clicked, select it. */
   const handleDayClick = (day) => {
     setSelectedDate(day);
+  };
+
+  /** When a day cell is double-clicked, select it and open creation modal. */
+  const handleDayDoubleClick = (day) => {
+    setSelectedDate(day);
+    modal.open(null); // null → creation mode
   };
 
   /** Open the modal for creating a new event on the selected day. */
@@ -58,6 +70,12 @@ export default function App() {
     }
   };
 
+  /** Import events from an ICS file string. */
+  const handleImportICS = (icsContent) => {
+    const imported = parseICS(icsContent);
+    imported.forEach((ev) => addEvent(ev));
+  };
+
   /** Toggle sidebar visibility (mostly useful on mobile). */
   const handleToggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -75,6 +93,8 @@ export default function App() {
         onViewChange={calendar.setViewMode}
         onToggleSidebar={handleToggleSidebar}
         onOpenSettings={() => settingsModal.open(null)}
+        onImportICS={handleImportICS}
+        onOpenCustomColors={() => setColorPanelOpen(true)}
         isSidebarOpen={sidebarOpen}
       />
 
@@ -96,7 +116,16 @@ export default function App() {
             selectedDate={selectedDate}
             events={events}
             onDayClick={handleDayClick}
+            onDayDoubleClick={handleDayDoubleClick}
+            onEventClick={handleEventClick}
             viewMode={calendar.viewMode}
+            holidays={holidays}
+            onPrev={calendar.goPrev}
+            onNext={calendar.goNext}
+            prevDays={calendar.prevDays}
+            nextDays={calendar.nextDays}
+            prevDate={calendar.prevDate}
+            nextDate={calendar.nextDate}
           />
         </main>
       </div>
@@ -110,6 +139,7 @@ export default function App() {
         onDelete={deleteEvent}
         onClose={modal.close}
         getAutoSuggestion={settings.getAutoSuggestion}
+        allColors={allColors}
       />
 
       {/* ---- Settings panel ---- */}
@@ -121,6 +151,16 @@ export default function App() {
         onDeleteRule={settings.deleteRule}
         onResetDefaults={settings.resetToDefaults}
         onClose={settingsModal.close}
+        allColors={allColors}
+      />
+
+      {/* ---- Colour palette panel ---- */}
+      <ColorPalettePanel
+        isOpen={colorPanelOpen}
+        customColors={customColors}
+        onAddColor={addColor}
+        onRemoveColor={removeColor}
+        onClose={() => setColorPanelOpen(false)}
       />
     </div>
   );

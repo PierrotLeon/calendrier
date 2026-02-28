@@ -123,6 +123,15 @@
   line-height: 1.2;
 }
 
+.event-chip__time {
+  font-size: 0.5rem;
+}
+
+.day-cell__holiday {
+  font-size: 0.35rem;
+  line-height: 1;
+}
+
 .day-cell__more {
   font-size: 0.5rem;
 }
@@ -191,6 +200,14 @@
   .event-chip {
     font-size: 0.6rem;
   }
+
+  .event-chip__time {
+    font-size: 0.55rem;
+  }
+
+  .day-cell__holiday {
+    font-size: 0.4rem;
+  }
 }
 
 /* ================================================================== */
@@ -227,6 +244,10 @@
   }
 
   .event-chip {
+    font-size: var(--font-size-xs);
+  }
+
+  .day-cell__holiday {
     font-size: var(--font-size-xs);
   }
 

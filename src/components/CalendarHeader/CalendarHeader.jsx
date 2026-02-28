@@ -2,9 +2,11 @@
  * @component CalendarHeader
  * @description Top navigation bar for the calendar.
  *
- * Displays the current month/year, navigation arrows, and an "Aujourd'hui"
- * button. A dropdown menu on the right gives access to the view toggle
- * (Mois / Semaine) and the event templates panel.
+ * Displays navigation arrows, current month/year, "Aujourd'hui" button,
+ * and a dropdown menu (⋮) for view toggle, ICS import, custom colours,
+ * and event templates.
+ *
+ * On mobile the header fits in a single row: ☰ ◀ date ▶ Auj. ⋮
  */
 
 import { useState, useRef, useEffect } from 'react';
@@ -20,10 +22,13 @@ export default function CalendarHeader({
   onViewChange,
   onToggleSidebar,
   onOpenSettings,
+  onImportICS,
+  onOpenCustomColors,
   isSidebarOpen,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   /* Close the dropdown when clicking outside */
   useEffect(() => {
@@ -37,9 +42,28 @@ export default function CalendarHeader({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [menuOpen]);
 
+  /** Trigger hidden file input for ICS import */
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+    setMenuOpen(false);
+  };
+
+  /** Handle file selection */
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      onImportICS?.(reader.result);
+    };
+    reader.readAsText(file);
+    // Reset so the same file can be re-imported
+    e.target.value = '';
+  };
+
   return (
     <header className="header" role="banner">
-      {/* ---- Left: sidebar toggle (mobile) + brand ---- */}
+      {/* ---- Left: sidebar toggle (mobile) ---- */}
       <div className="header__left">
         {onToggleSidebar && (
           <button
@@ -50,10 +74,6 @@ export default function CalendarHeader({
             {isSidebarOpen ? '✕' : '☰'}
           </button>
         )}
-        <div className="header__title">
-          <span role="img" aria-label="calendrier">📅</span>
-          <span className="header__title-text">Calendrier</span>
-        </div>
       </div>
 
       {/* ---- Centre: navigation ---- */}
@@ -65,8 +85,8 @@ export default function CalendarHeader({
         <button className="btn btn--icon" onClick={onNext} aria-label="Suivant">
           ▶
         </button>
-        <button className="btn header__today-btn" onClick={onToday}>
-          Aujourd'hui
+        <button className="btn btn--sm header__today-btn" onClick={onToday}>
+          Auj.
         </button>
       </nav>
 
@@ -80,6 +100,16 @@ export default function CalendarHeader({
         >
           ⋮
         </button>
+
+        {/* Hidden file input for ICS import */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".ics,text/calendar"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+          data-testid="ics-file-input"
+        />
 
         {menuOpen && (
           <div className="header-menu" role="menu">
@@ -103,6 +133,28 @@ export default function CalendarHeader({
             </div>
 
             <div className="header-menu__divider" />
+
+            {/* Import ICS */}
+            {onImportICS && (
+              <button
+                className="header-menu__item"
+                role="menuitem"
+                onClick={handleImportClick}
+              >
+                📥 Importer un fichier .ics
+              </button>
+            )}
+
+            {/* Custom colours */}
+            {onOpenCustomColors && (
+              <button
+                className="header-menu__item"
+                role="menuitem"
+                onClick={() => { onOpenCustomColors(); setMenuOpen(false); }}
+              >
+                🎨 Palette de couleurs
+              </button>
+            )}
 
             {/* Templates / Settings */}
             {onOpenSettings && (

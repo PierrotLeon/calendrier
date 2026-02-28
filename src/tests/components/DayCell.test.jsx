@@ -64,7 +64,7 @@ describe('DayCell', () => {
       makeEvent({ id: '3', title: 'C', startDate: '2026-02-15', endDate: '2026-02-15', date: '2026-02-15' }),
     ];
     render(<DayCell {...baseProps} events={events} />);
-    expect(screen.getByText('+1 more')).toBeInTheDocument();
+    expect(screen.getByText('+1')).toBeInTheDocument();
   });
 
   /* ---------------------------------------------------------------- */
@@ -136,6 +136,33 @@ describe('DayCell', () => {
     expect(onDayClick).toHaveBeenCalledWith(baseProps.day);
   });
 
+  it('calls onDayDoubleClick when double-clicked', async () => {
+    const onDayDoubleClick = vi.fn();
+    render(<DayCell {...baseProps} onDayDoubleClick={onDayDoubleClick} />);
+    await userEvent.dblClick(screen.getByRole('button'));
+    expect(onDayDoubleClick).toHaveBeenCalledWith(baseProps.day);
+  });
+
+  it('calls onEventClick when an event chip is double-clicked', async () => {
+    const onEventClick = vi.fn();
+    const ev = makeEvent({ startDate: '2026-02-15', endDate: '2026-02-15', date: '2026-02-15' });
+    render(<DayCell {...baseProps} events={[ev]} onEventClick={onEventClick} />);
+    await userEvent.dblClick(screen.getByText('Test Event'));
+    expect(onEventClick).toHaveBeenCalledWith(ev);
+  });
+
+  it('does not bubble double-click from event chip to day cell', async () => {
+    const onDayDoubleClick = vi.fn();
+    const onEventClick = vi.fn();
+    const ev = makeEvent({ startDate: '2026-02-15', endDate: '2026-02-15', date: '2026-02-15' });
+    render(
+      <DayCell {...baseProps} events={[ev]} onDayDoubleClick={onDayDoubleClick} onEventClick={onEventClick} />,
+    );
+    await userEvent.dblClick(screen.getByText('Test Event'));
+    expect(onEventClick).toHaveBeenCalledOnce();
+    expect(onDayDoubleClick).not.toHaveBeenCalled();
+  });
+
   /* ---------------------------------------------------------------- */
   /*  Multi-day event chip classes                                     */
   /* ---------------------------------------------------------------- */
@@ -185,5 +212,82 @@ describe('DayCell', () => {
       'aria-label',
       '15, 1 événement',
     );
+  });
+
+  /* ---------------------------------------------------------------- */
+  /*  Weekend / Holiday styling                                        */
+  /* ---------------------------------------------------------------- */
+
+  it('applies day-cell--weekend class on a Saturday', () => {
+    // 2026-02-14 is a Saturday
+    const { container } = render(
+      <DayCell {...baseProps} day={d('2026-02-14')} />,
+    );
+    expect(container.firstChild).toHaveClass('day-cell--weekend');
+  });
+
+  it('applies day-cell--weekend class on a Sunday', () => {
+    // 2026-02-15 is a Sunday
+    const { container } = render(
+      <DayCell {...baseProps} day={d('2026-02-15')} />,
+    );
+    expect(container.firstChild).toHaveClass('day-cell--weekend');
+  });
+
+  it('does NOT apply day-cell--weekend on a weekday without holiday', () => {
+    // 2026-02-16 is a Monday
+    const { container } = render(
+      <DayCell {...baseProps} day={d('2026-02-16')} />,
+    );
+    expect(container.firstChild).not.toHaveClass('day-cell--weekend');
+  });
+
+  it('applies day-cell--weekend class when holidayName is provided on a weekday', () => {
+    // 2026-02-16 is a Monday, but treat as holiday
+    const { container } = render(
+      <DayCell {...baseProps} day={d('2026-02-16')} holidayName="Jour férié test" />,
+    );
+    expect(container.firstChild).toHaveClass('day-cell--weekend');
+  });
+
+  it('displays the holiday name label', () => {
+    render(
+      <DayCell {...baseProps} day={d('2026-02-16')} holidayName="Lundi de Pâques" />,
+    );
+    expect(screen.getByText('Lundi de Pâques')).toBeInTheDocument();
+  });
+
+  it('includes holiday name in the aria-label', () => {
+    render(
+      <DayCell {...baseProps} day={d('2026-02-16')} holidayName="Ascension" />,
+    );
+    const label = screen.getByRole('button').getAttribute('aria-label');
+    expect(label).toContain('Ascension');
+  });
+
+  /* ---------------------------------------------------------------- */
+  /*  Event chip time display                                          */
+  /* ---------------------------------------------------------------- */
+
+  it('shows the start time on event chips', () => {
+    const events = [makeEvent({
+      startDate: '2026-02-15',
+      endDate: '2026-02-15',
+      date: '2026-02-15',
+      startTime: '14:30',
+    })];
+    const { container } = render(<DayCell {...baseProps} events={events} />);
+    expect(container.querySelector('.event-chip__time')).toHaveTextContent('14:30');
+  });
+
+  it('does NOT show time when the event has no startTime', () => {
+    const events = [makeEvent({
+      startDate: '2026-02-15',
+      endDate: '2026-02-15',
+      date: '2026-02-15',
+      startTime: '',
+    })];
+    const { container } = render(<DayCell {...baseProps} events={events} />);
+    expect(container.querySelector('.event-chip__time')).toBeNull();
   });
 });

@@ -32,6 +32,28 @@ export function useCalendar(initialDate = new Date()) {
       : getWeekDays(currentDate);
   }, [currentDate, viewMode]);
 
+  /** Days for the previous month/week (shown during swipe-right). */
+  const prevDays = useMemo(() => {
+    const d = viewMode === VIEW_MODES.MONTH ? prevMonth(currentDate) : prevWeek(currentDate);
+    return viewMode === VIEW_MODES.MONTH ? getMonthGridDays(d) : getWeekDays(d);
+  }, [currentDate, viewMode]);
+
+  /** Days for the next month/week (shown during swipe-left). */
+  const nextDays = useMemo(() => {
+    const d = viewMode === VIEW_MODES.MONTH ? nextMonth(currentDate) : nextWeek(currentDate);
+    return viewMode === VIEW_MODES.MONTH ? getMonthGridDays(d) : getWeekDays(d);
+  }, [currentDate, viewMode]);
+
+  /** Date anchor for the previous period (used for "other month" styling). */
+  const prevDate = useMemo(() => {
+    return viewMode === VIEW_MODES.MONTH ? prevMonth(currentDate) : prevWeek(currentDate);
+  }, [currentDate, viewMode]);
+
+  /** Date anchor for the next period. */
+  const nextDate = useMemo(() => {
+    return viewMode === VIEW_MODES.MONTH ? nextMonth(currentDate) : nextWeek(currentDate);
+  }, [currentDate, viewMode]);
+
   /* ---- Navigation callbacks ---- */
   const goNext = useCallback(() => {
     setCurrentDate((d) =>
@@ -58,6 +80,10 @@ export function useCalendar(initialDate = new Date()) {
     viewMode,
     setViewMode,
     days,
+    prevDays,
+    nextDays,
+    prevDate,
+    nextDate,
     goNext,
     goPrev,
     goToday,

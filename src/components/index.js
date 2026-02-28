@@ -10,3 +10,4 @@ export { default as EventModal } from './EventModal';
 export { default as EventList } from './EventList';
 export { default as Sidebar } from './Sidebar';
 export { default as SettingsPanel } from './SettingsPanel';
+export { default as ColorPalettePanel } from './ColorPalettePanel';

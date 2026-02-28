@@ -29,7 +29,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: var(--space-4);
 }
 
@@ -228,6 +229,46 @@
 }
 
 /* ================================================================== */
+/*  SWIPE VIEWPORT (two-page carousel during swipe gesture)            */
+/* ================================================================== */
+
+.swipe-viewport {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  /* Allow vertical scrolling but let JS handle horizontal swipe */
+  touch-action: pan-y;
+}
+
+.swipe-track {
+  /* transform set via inline style */
+  display: flex;
+  width: 200%;
+  flex: 1;
+  min-height: 0;
+}
+
+/* When idle (no swipe), the track holds one page at 100 % viewport width */
+.swipe-track--idle {
+  width: 100%;
+}
+
+.swipe-page {
+  width: 50%;        /* 50 % of track = 100 % of viewport */
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* When idle, the single page fills the whole track */
+.swipe-page--idle {
+  width: 100%;
+}
+
+/* ================================================================== */
 /*  CALENDAR GRID                                                      */
 /* ================================================================== */
 
@@ -345,6 +386,32 @@
   outline-offset: 1px;
 }
 
+/* Weekend / holiday cells */
+.day-cell--weekend {
+  background: var(--color-weekend-bg);
+}
+.day-cell--weekend:hover {
+  background: #FDF3E7;
+}
+.day-cell--weekend.day-cell--outside {
+  opacity: 0.45;
+}
+.day-cell--weekend.day-cell--today {
+  background: var(--color-today-bg);
+}
+
+/* Holiday name label */
+.day-cell__holiday {
+  display: block;
+  font-size: 0.5rem;
+  color: var(--color-danger);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
 .day-cell__events {
   display: flex;
   flex-direction: column;
@@ -356,6 +423,9 @@
 /* ================================================================== */
 
 .event-chip {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   padding: 1px var(--space-1);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
@@ -363,8 +433,23 @@
   border-radius: var(--radius-sm);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   line-height: 1.4;
+  cursor: pointer;
+}
+
+/* Title truncates, time stays visible */
+.event-chip__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-chip__time {
+  flex-shrink: 0;
+  font-size: 0.65em;
+  opacity: 0.9;
 }
 
 /* Multi-day event chip variants */
@@ -953,6 +1038,7 @@
   display: flex;
   flex-direction: column;
   line-height: 1.3;
+  cursor: pointer;
 }
 
 .week-grid__event-time {
@@ -964,4 +1050,85 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ================================================================== */
+/*  COLOR PALETTE PANEL                                                */
+/* ================================================================== */
+
+.color-palette-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.color-palette-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.color-palette-item__swatch {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+
+.color-palette-item__label {
+  color: var(--color-text-secondary);
+}
+
+.color-palette-add {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.color-palette-add__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.color-palette-add__picker {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.color-palette-add__hex-input {
+  flex: 1;
+  min-width: 0;
+  max-width: 7rem;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.color-palette-add__preview {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.color-palette-add__hex {
+  font-family: monospace;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }

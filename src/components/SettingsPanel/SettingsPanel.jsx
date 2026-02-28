@@ -20,6 +20,7 @@ export default function SettingsPanel({
   onDeleteRule,
   onResetDefaults,
   onClose,
+  allColors,
 }) {
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState({});
@@ -47,10 +48,11 @@ export default function SettingsPanel({
 
   /* ---- Add a blank template and start editing it ---- */
   const handleAdd = () => {
+    const colors = allColors || EVENT_COLORS;
     const ruleData = {
       name: 'Nouveau modèle',
       pattern: '\\b(mot-clé)\\b',
-      color: EVENT_COLORS[0].value,
+      color: colors[0].value,
       startTime: '',
       endTime: '',
       enabled: true,
@@ -121,7 +123,7 @@ export default function SettingsPanel({
                     <div className="form-field">
                       <span className="form-field__label">Couleur</span>
                       <div className="color-picker">
-                        {EVENT_COLORS.map((c) => (
+                        {(allColors || EVENT_COLORS).map((c) => (
                           <button
                             key={c.value}
                             type="button"

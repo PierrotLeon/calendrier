@@ -18,6 +18,8 @@ const defaultProps = {
   onViewChange: vi.fn(),
   onToggleSidebar: vi.fn(),
   onOpenSettings: vi.fn(),
+  onImportICS: vi.fn(),
+  onOpenCustomColors: vi.fn(),
   isSidebarOpen: false,
 };
 
@@ -25,11 +27,6 @@ describe('CalendarHeader', () => {
   it('displays the current month and year in French', () => {
     render(<CalendarHeader {...defaultProps} />);
     expect(screen.getByText('Février 2026')).toBeInTheDocument();
-  });
-
-  it('displays the brand name', () => {
-    render(<CalendarHeader {...defaultProps} />);
-    expect(screen.getByText('Calendrier')).toBeInTheDocument();
   });
 
   it('calls onPrev when the back button is clicked', async () => {
@@ -46,10 +43,10 @@ describe('CalendarHeader', () => {
     expect(onNext).toHaveBeenCalledOnce();
   });
 
-  it('calls onToday when the Aujourd\'hui button is clicked', async () => {
+  it('calls onToday when the Auj. button is clicked', async () => {
     const onToday = vi.fn();
     render(<CalendarHeader {...defaultProps} onToday={onToday} />);
-    await userEvent.click(screen.getByText("Aujourd'hui"));
+    await userEvent.click(screen.getByText('Auj.'));
     expect(onToday).toHaveBeenCalledOnce();
   });
 
@@ -93,5 +90,25 @@ describe('CalendarHeader', () => {
     render(<CalendarHeader {...defaultProps} isSidebarOpen={false} />);
     const toggle = screen.getByLabelText('Ouvrir le panneau');
     expect(toggle.textContent).toBe('☰');
+  });
+
+  it('shows the ICS import menu item when onImportICS is provided', async () => {
+    render(<CalendarHeader {...defaultProps} />);
+    await userEvent.click(screen.getByLabelText('Menu'));
+    expect(screen.getByText(/Importer un fichier .ics/)).toBeInTheDocument();
+  });
+
+  it('shows the custom colours menu item when onOpenCustomColors is provided', async () => {
+    render(<CalendarHeader {...defaultProps} />);
+    await userEvent.click(screen.getByLabelText('Menu'));
+    expect(screen.getByText(/Palette de couleurs/)).toBeInTheDocument();
+  });
+
+  it('calls onOpenCustomColors when palette menu item is clicked', async () => {
+    const onOpenCustomColors = vi.fn();
+    render(<CalendarHeader {...defaultProps} onOpenCustomColors={onOpenCustomColors} />);
+    await userEvent.click(screen.getByLabelText('Menu'));
+    await userEvent.click(screen.getByText(/Palette de couleurs/));
+    expect(onOpenCustomColors).toHaveBeenCalledOnce();
   });
 });

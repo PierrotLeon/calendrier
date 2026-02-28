@@ -163,6 +163,16 @@ export function isToday(date) {
   return dfIsToday(date);
 }
 
+/**
+ * Check whether `date` falls on a Saturday or Sunday.
+ * @param {Date} date
+ * @returns {boolean}
+ */
+export function isWeekend(date) {
+  const day = date.getDay(); // 0 = Sunday, 6 = Saturday
+  return day === 0 || day === 6;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Parsing                                                           */
 /* ------------------------------------------------------------------ */

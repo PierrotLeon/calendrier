@@ -13,11 +13,6 @@ describe('App', () => {
     localStorage.clear();
   });
 
-  it('renders the calendar header with the brand name', () => {
-    render(<App />);
-    expect(screen.getByText('Calendrier')).toBeInTheDocument();
-  });
-
   it('renders weekday headers', () => {
     render(<App />);
     expect(screen.getByText('Lun')).toBeInTheDocument();
@@ -109,5 +104,49 @@ describe('App', () => {
     // Before clicking, at most one cell (today) may be selected (initial state)
     await userEvent.click(cells[2]);
     expect(cells[2]).toHaveClass('day-cell--selected');
+  });
+
+  it('opens the creation modal when double-clicking a day cell', async () => {
+    render(<App />);
+    const cells = document.querySelectorAll('.day-cell');
+    await userEvent.dblClick(cells[2]);
+    expect(screen.getByText('Nouvel événement')).toBeInTheDocument();
+    expect(screen.getByLabelText('Titre')).toBeInTheDocument();
+  });
+
+  it('opens the edit modal when double-clicking an event chip in the grid', async () => {
+    render(<App />);
+    // First create an event
+    await userEvent.click(screen.getByText('+ Nouvel événement'));
+    const titleInput = screen.getByLabelText('Titre');
+    await userEvent.type(titleInput, 'Double Click Test');
+    await userEvent.click(screen.getByText('Créer'));
+
+    // The event chip should appear in the grid
+    const chips = document.querySelectorAll('.event-chip');
+    expect(chips.length).toBeGreaterThanOrEqual(1);
+
+    // Double-click the chip to open edit modal
+    await userEvent.dblClick(chips[0]);
+    expect(screen.getByText("Modifier l'événement")).toBeInTheDocument();
+  });
+
+  it('shows ICS import option in the menu', async () => {
+    render(<App />);
+    await userEvent.click(screen.getByLabelText('Menu'));
+    expect(screen.getByText(/Importer un fichier .ics/)).toBeInTheDocument();
+  });
+
+  it('shows colour palette option in the menu', async () => {
+    render(<App />);
+    await userEvent.click(screen.getByLabelText('Menu'));
+    expect(screen.getByText(/Palette de couleurs/)).toBeInTheDocument();
+  });
+
+  it('opens the colour palette panel via the menu', async () => {
+    render(<App />);
+    await userEvent.click(screen.getByLabelText('Menu'));
+    await userEvent.click(screen.getByText(/Palette de couleurs/));
+    expect(screen.getByText('Palette de couleurs', { selector: '.modal__title' })).toBeInTheDocument();
   });
 });

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#4F46E5"/>
+  <rect x="72" y="120" width="368" height="320" rx="24" fill="#fff"/>
+  <rect x="72" y="120" width="368" height="72" rx="24" fill="#E0E7FF"/>
+  <rect x="72" y="168" width="368" height="24" fill="#E0E7FF"/>
+  <circle cx="160" cy="156" r="16" fill="#4F46E5"/>
+  <circle cx="352" cy="156" r="16" fill="#4F46E5"/>
+  <rect x="152" y="120" width="8" height="52" rx="4" fill="#4F46E5"/>
+  <rect x="348" y="120" width="8" height="52" rx="4" fill="#4F46E5"/>
+  <!-- Grid lines -->
+  <line x1="124" y1="260" x2="388" y2="260" stroke="#E2E8F0" stroke-width="2"/>
+  <line x1="124" y1="320" x2="388" y2="320" stroke="#E2E8F0" stroke-width="2"/>
+  <line x1="124" y1="380" x2="388" y2="380" stroke="#E2E8F0" stroke-width="2"/>
+  <line x1="192" y1="210" x2="192" y2="420" stroke="#E2E8F0" stroke-width="2"/>
+  <line x1="258" y1="210" x2="258" y2="420" stroke="#E2E8F0" stroke-width="2"/>
+  <line x1="324" y1="210" x2="324" y2="420" stroke="#E2E8F0" stroke-width="2"/>
+  <!-- Day number -->
+  <text x="256" y="310" text-anchor="middle" font-family="Inter,sans-serif" font-size="64" font-weight="700" fill="#4F46E5">28</text>
+</svg>

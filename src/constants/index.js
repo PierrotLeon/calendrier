@@ -82,6 +82,9 @@ export const STORAGE_KEY = 'calendrier_events';
 /** Key under which event-type rules (settings) are stored. */
 export const SETTINGS_KEY = 'calendrier_settings';
 
+/** Key under which custom palette colours are stored. */
+export const CUSTOM_COLORS_KEY = 'calendrier_custom_colors';
+
 /* ------------------------------------------------------------------ */
 /*  Responsive breakpoints                                            */
 /* ------------------------------------------------------------------ */
