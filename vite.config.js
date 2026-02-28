@@ -5,6 +5,7 @@ import { resolve } from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/calendrier/',
   plugins: [
     react(),
     VitePWA({
@@ -21,8 +22,8 @@ export default defineConfig({
         theme_color: '#4F46E5',
         background_color: '#F8FAFC',
         display: 'standalone',
-        scope: '/',
-        start_url: '/',
+        scope: '/calendrier/',
+        start_url: '/calendrier/',
         icons: [
           {
             src: 'pwa-192x192.png',
